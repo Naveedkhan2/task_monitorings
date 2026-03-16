@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: task-monitoring-system
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python app.py
+    envVars:
+      - key: GOOGLE_SHEETS_WEB_APP_URL
+        value: https://script.google.com/macros/s/AKfycbwXiKI3es2EghNYi3QTmXC7lOiyv9tFNp2mZV9r6SfY9tyNrLgFWB9hjWsRflyiP2xT/exec
+      - key: PORT
+        value: 5000
+      - key: FLASK_DEBUG
+        value: "False"
+
