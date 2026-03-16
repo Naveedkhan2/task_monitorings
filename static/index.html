@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Monitoring System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="login-page" class="page active">
+        <div class="auth-container">
+            <div class="auth-card">
+                <h1 class="auth-title">Task Monitoring System</h1>
+                <h2 class="auth-subtitle">Login</h2>
+                
+                <div id="login-error" class="error-message" style="display: none;"></div>
+                
+                <form id="login-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" required placeholder="Enter your email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" required placeholder="Enter your password">
+                    </div>
+                    
+                    <button type="submit" class="auth-button">Login</button>
+                </form>
+                
+                <p class="auth-footer">
+                    Don't have an account? <a href="#" id="show-signup">Sign up</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Signup Page -->
+    <div id="signup-page" class="page">
+        <div class="auth-container">
+            <div class="auth-card">
+                <h1 class="auth-title">Task Monitoring System</h1>
+                <h2 class="auth-subtitle">Sign Up</h2>
+                
+                <div id="config-warning" class="error-message" style="display: none; background-color: #fff3cd; border-color: #ffc107; color: #856404;">
+                    <strong>⚠️ Google Sheets not configured:</strong> Please set the GOOGLE_SHEETS_WEB_APP_URL environment variable. See setup instructions in APPS_SCRIPT_SETUP.md
+                </div>
+                <div id="signup-error" class="error-message" style="display: none;"></div>
+                
+                <form id="signup-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="signup-username">Username</label>
+                        <input type="text" id="signup-username" required placeholder="Enter your username">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" required placeholder="Enter your email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" required placeholder="Enter your password" minlength="6">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signup-confirm-password">Confirm Password</label>
+                        <input type="password" id="signup-confirm-password" required placeholder="Confirm your password" minlength="6">
+                    </div>
+                    
+                    <button type="submit" class="auth-button">Sign Up</button>
+                </form>
+                
+                <p class="auth-footer">
+                    Already have an account? <a href="#" id="show-login">Login</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Admin Dashboard -->
+    <div id="admin-dashboard" class="page dashboard-container">
+        <header class="dashboard-header">
+            <h1>Admin Dashboard</h1>
+            <div class="header-actions">
+                <span class="user-name" id="admin-user-name">Welcome, Admin</span>
+                <button onclick="logout()" class="logout-button">Logout</button>
+            </div>
+        </header>
+        
+        <div class="dashboard-content">
+            <!-- Pending Users Approval Section -->
+            <section id="pending-users-section" class="pending-users-section" style="display: none; margin-bottom: 30px; padding: 20px; background: #fff3cd; border-radius: 8px; border: 1px solid #ffc107;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h2 style="margin: 0; color: #856404;">
+                        Pending User Approvals (<span id="pending-users-count">0</span>)
+                    </h2>
+                    <button onclick="togglePendingUsers()" class="primary-button" style="background: #ffc107; color: #000;">
+                        <span id="pending-users-toggle-text">Show</span> Pending Users
+                    </button>
+                </div>
+                <div id="pending-users-content" style="display: none;">
+                    <div id="pending-users-list">
+                        <!-- Pending users will be loaded here -->
+                    </div>
+                </div>
+            </section>
+            
+            <section class="stats-section">
+                <h2>General Performance Overview</h2>
+                <div class="stats-grid" id="admin-general-stats">
+                    <!-- Stats will be loaded here -->
+                </div>
+            </section>
+            
+            <section class="user-performance-section">
+                <h2>User-wise Performance</h2>
+                <div class="user-stats-table">
+                    <table id="user-stats-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Total Tasks</th>
+                                <th>Pending</th>
+                                <th>In Progress</th>
+                                <th>Completed</th>
+                                <th>Overdue</th>
+                            </tr>
+                        </thead>
+                        <tbody id="user-stats-body">
+                            <!-- User stats will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <section class="tasks-section">
+                <div class="section-header">
+                    <h2>Task Management</h2>
+                    <button onclick="toggleTaskForm()" class="primary-button" id="task-form-toggle">+ Create New Task</button>
+                </div>
+                
+                <form id="task-form" class="task-form" style="display: none;" onsubmit="createTask(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Title *</label>
+                            <input type="text" id="task-title" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Assign To *</label>
+                            <select id="task-assigned-to" required>
+                                <option value="">Select User</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label>Description</label>
+                            <textarea id="task-description" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Deadline</label>
+                            <input type="datetime-local" id="task-deadline">
+                        </div>
+                    </div>
+                    <button type="submit" class="primary-button">Create Task</button>
+                </form>
+                
+                <div class="tasks-list" id="admin-tasks-list">
+                    <!-- Tasks will be loaded here -->
+                </div>
+            </section>
+        </div>
+    </div>
+    
+    <!-- User Dashboard -->
+    <div id="user-dashboard" class="page dashboard-container">
+        <header class="dashboard-header">
+            <h1>My Dashboard</h1>
+            <div class="header-actions">
+                <span class="user-name" id="user-name">Welcome, User</span>
+                <button onclick="logout()" class="logout-button">Logout</button>
+            </div>
+        </header>
+        
+        <div class="dashboard-content">
+            <section class="stats-section">
+                <h2>My Performance Overview</h2>
+                <div class="stats-grid" id="user-stats">
+                    <!-- Stats will be loaded here -->
+                </div>
+            </section>
+            
+            <section class="tasks-section">
+                <h2>My Tasks</h2>
+                <div class="tasks-list" id="user-tasks-list">
+                    <!-- Tasks will be loaded here -->
+                </div>
+            </section>
+        </div>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
+
